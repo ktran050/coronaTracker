@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home</title>
+    <link rel="stylesheet" href="main.css" />
+    <script src="https://code.jquery.com/jquery-1.7.1.min.js"></script>
+  </head>
+  <body>
+    <div id="container" class="container">
+      <header>
+        <div><h1>Title</h1></div>
+      </header>
+      <main>
+        <div id="optionsDiv" class="tempDiv">
+          <h2>optionsDiv</h2>
+          <div>
+            <select id="countriesList">
+              <option>country</option>
+            </select>
+            <button id="addCountry">Add Country</button>
+          </div>
+        </div>
+        <div id="graphDiv" class="tempDiv">
+          <h2>graphDiv</h2>
+          <div id="tempGraph">Graph</div>
+          <select
+            ><option>View Options</option></select
+          >
+        </div>
+        <div id="legendDiv" class="tempDiv">
+          <h2>legendDiv</h2>
+          <ul>
+            Countries
+            <li>Country A</li>
+          </ul>
+          <ul>
+            Groups
+            <li>Group A</li>
+          </ul>
+        </div>
+      </main>
+      <footer>Links</footer>
+    </div>
+    <script src="main.js"></script>
+  </body>
+</html>
