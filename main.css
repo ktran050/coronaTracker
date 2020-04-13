@@ -1,0 +1,42 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+}
+
+header {
+  position: relative;
+  top: 0px;
+  height: 67px;
+  background-color: blue;
+  text-align: center;
+}
+
+main {
+  background-color: green;
+  min-height: 85vh;
+  text-align: center;
+}
+
+#tempGraph {
+  height: 300px;
+  width: 300px;
+  background: black;
+  margin: 0 auto;
+}
+
+footer {
+  position: relative;
+  bottom: 0px;
+  height: 33px;
+  background-color: red;
+  text-align: center;
+}
+
+.tempDiv {
+  border: 1px black solid;
+}
