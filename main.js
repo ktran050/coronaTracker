@@ -1,5 +1,5 @@
 // "use strict";
-const baseURL = "disease.sh/";
+const baseURL = "https://disease.sh/";
 
 function drawCountryList() {
   // called at the start of the script
