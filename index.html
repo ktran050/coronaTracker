@@ -6,6 +6,7 @@
     <title>Home</title>
     <link rel="stylesheet" href="main.css" />
     <script src="https://code.jquery.com/jquery-1.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
   </head>
   <body>
     <div id="container" class="container">
@@ -24,7 +25,7 @@
         </div>
         <div id="graphDiv" class="tempDiv">
           <h2>graphDiv</h2>
-          <div id="tempGraph">Graph</div>
+          <canvas id="chart"></canvas>
           <select
             ><option>View Options</option></select
           >
@@ -44,5 +45,6 @@
       <footer>Links</footer>
     </div>
     <script src="main.js"></script>
+    <script src="chart.js"></script>
   </body>
 </html>
