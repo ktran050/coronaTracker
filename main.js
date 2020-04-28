@@ -32,24 +32,37 @@ function handleAddCountry() {
   });
 }
 
+function updateGraph() {
+  console.log("graph updated");
+}
+
+function getData(countryName) {
+  cachedData[`${countryName}`] = 1;
+  console.log("data grabbed for:", countryName);
+}
+function updateCache() {
+  for (const property in watchList) {
+    if (!(property in cachedData)) {
+      getData(`${property}`);
+    }
+  }
+  console.log("cache updated");
+}
+
 function handleUpdateGraph() {
   // called by handleEverything
   $("#graphDiv").on("click", "#updateGraph", function (event) {
     event.preventDefault();
-    console.log("graph updated");
+    updateCache();
+    updateGraph();
+    console.log("update graph handled");
   });
 }
-
-// function getData(countryName) {
-//   // called by updateGraph
-//   // returns nothing; updates cachedData
-//   let countryData = [];
-//   cachedData.push(countryData);
-// }
 
 function handleEverything() {
   handleAddCountry();
   drawCountryList();
+  handleUpdateGraph();
   console.log("everything handled");
 }
 
