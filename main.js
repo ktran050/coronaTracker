@@ -1,5 +1,7 @@
 // "use strict";
 const baseURL = "https://disease.sh/";
+let cachedData = {};
+let watchList = {};
 
 function drawCountryList() {
   // called at the start of the script
@@ -24,11 +26,13 @@ function handleAddCountry() {
   $("#optionsDiv").on("click", "#addCountry", function (event) {
     event.preventDefault();
     let readInput = $("#countriesList").val();
+    watchList[readInput] = 1;
     console.log("country to add: ", readInput);
+    console.log("watchList: ", watchList);
   });
 }
 
-function updateGraph() {
+function handleUpdateGraph() {
   // called by handleEverything
   $("#graphDiv").on("click", "#updateGraph", function (event) {
     event.preventDefault();
@@ -36,10 +40,16 @@ function updateGraph() {
   });
 }
 
+// function getData(countryName) {
+//   // called by updateGraph
+//   // returns nothing; updates cachedData
+//   let countryData = [];
+//   cachedData.push(countryData);
+// }
+
 function handleEverything() {
   handleAddCountry();
   drawCountryList();
-  updateGraph();
   console.log("everything handled");
 }
 
