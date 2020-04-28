@@ -1,17 +1,21 @@
 // "use strict";
-const baseURL = "https://disease.sh/";
+const baseURL = "https://disease.sh/v2/";
 let cachedData = {};
 let watchList = {};
 
 function drawCountryList() {
   // called at the start of the script
-  let interList = [];
   let resultHTML = [];
-  fetch(baseURL + "v2/countries")
+  fetch(baseURL + "countries")
     .then(function (result) {
-      return result.text();
+      if (!result.ok) {
+        console.log("Server may be downed. Data not found");
+      } else {
+        return result.text();
+      }
     })
     .then(function (result) {
+      let interList = [];
       interList = JSON.parse(result);
       for (let i = 0; i < interList.length; ++i) {
         resultHTML += `<option>${interList[i].country}</option>`;
@@ -37,9 +41,24 @@ function updateGraph() {
 }
 
 function getData(countryName) {
+  fetch(decodeURI(baseURL + `historical/${countryName}`))
+    .then(function (result) {
+      if (!result.ok) {
+        console.log("Server may be downed or country data not found.");
+      } else {
+        return result.text();
+      }
+    })
+    .then(function (result) {
+      console.log("!!!!!!!! result: ", result);
+      let interList = JSON.parse(result);
+      cachedData[`${interList.country}`] = `${interList.timeline.cases}`;
+      console.log("********** cachedData: ", cachedData);
+    });
   cachedData[`${countryName}`] = 1;
   console.log("data grabbed for:", countryName);
 }
+
 function updateCache() {
   for (const property in watchList) {
     if (!(property in cachedData)) {
