@@ -28,9 +28,18 @@ function handleAddCountry() {
   });
 }
 
+function updateGraph() {
+  // called by handleEverything
+  $("#graphDiv").on("click", "#updateGraph", function (event) {
+    event.preventDefault();
+    console.log("graph updated");
+  });
+}
+
 function handleEverything() {
   handleAddCountry();
   drawCountryList();
+  updateGraph();
   console.log("everything handled");
 }
 
