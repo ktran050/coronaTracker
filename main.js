@@ -1,5 +1,5 @@
 // "use strict";
-const baseURL = "https://corona.lmao.ninja/";
+const baseURL = "disease.sh/";
 
 function drawCountryList() {
   // called at the start of the script
