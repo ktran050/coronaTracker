@@ -2,6 +2,38 @@
 const baseURL = "https://disease.sh/v2/";
 let cachedData = {};
 let watchList = {};
+let initLabelsArray = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+];
+let initDataArray = [0, 10, 5, 2, 20, 30, 45];
+
+var ctx = document.getElementById("chart").getContext("2d");
+var chart = new Chart(ctx, {
+  // The type of chart we want to create
+  type: "line",
+
+  // The data for our dataset
+  data: {
+    labels: initLabelsArray,
+    datasets: [
+      {
+        label: "Historical Graph of Corona Virus Cases: United States",
+        backgroundColor: "rgb(255, 99, 132)",
+        borderColor: "rgb(255, 99, 132)",
+        data: initDataArray,
+      },
+    ],
+  },
+
+  // Configuration options go here
+  options: {},
+});
 
 function drawCountryList() {
   // called at the start of the script
@@ -36,8 +68,49 @@ function handleAddCountry() {
   });
 }
 
+function checkCachedData() {
+  for (const property in cachedData) {
+    console.log("cachedData key/value: ", property, cachedData[property]);
+  }
+}
+
 function updateGraph() {
-  console.log("graph updated");
+  let dataArray = [];
+  let labelsArray = [];
+  checkCachedData();
+  let firstCache = Object.keys(cachedData)[0];
+  console.log("firstCache: ", firstCache);
+  console.log("cachedData[afg]: ", cachedData[firstCache]);
+
+  for (const property in cachedData[firstCache]) {
+    console.log("property: ", property);
+    labelsArray.push(property);
+    dataArray.push(firstCache[property]);
+  }
+
+  console.log("dataArray: ", dataArray);
+  console.log("labelsArray: ", labelsArray);
+
+  chart = new Chart(ctx, {
+    // The type of chart we want to create
+    type: "line",
+
+    // The data for our dataset
+    data: {
+      labels: labelsArray,
+      datasets: [
+        {
+          label: "Historical Graph of Corona Virus Cases: United States",
+          backgroundColor: "rgb(255, 99, 132)",
+          borderColor: "rgb(255, 99, 132)",
+          data: dataArray,
+        },
+      ],
+    },
+
+    // Configuration options go here
+    options: {},
+  });
 }
 
 function getData(countryName) {
@@ -50,13 +123,10 @@ function getData(countryName) {
       }
     })
     .then(function (result) {
-      console.log("!!!!!!!! result: ", result);
       let interList = JSON.parse(result);
-      cachedData[`${interList.country}`] = `${interList.timeline.cases}`;
-      console.log("********** cachedData: ", cachedData);
+      cachedData[`${interList.country}`] = interList.timeline.cases;
+      checkCachedData();
     });
-  cachedData[`${countryName}`] = 1;
-  console.log("data grabbed for:", countryName);
 }
 
 function updateCache() {
@@ -65,15 +135,21 @@ function updateCache() {
       getData(`${property}`);
     }
   }
-  console.log("cache updated");
+
+  return new Promise(function (resolve, reject) {
+    resolve("test");
+    console.log("cache updated");
+  });
 }
 
 function handleUpdateGraph() {
   // called by handleEverything
   $("#graphDiv").on("click", "#updateGraph", function (event) {
     event.preventDefault();
-    updateCache();
-    updateGraph();
+    updateCache().then(function (result) {
+      updateGraph();
+    });
+    // updateGraph();
     console.log("update graph handled");
   });
 }
