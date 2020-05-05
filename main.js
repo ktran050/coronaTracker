@@ -54,7 +54,7 @@ function drawCountryList() {
       }
       $("#countriesList").html(resultHTML);
     });
-  console.log("list of countries added");
+  console.log("list of countries is drawn");
 }
 
 function handleAddCountry() {
@@ -63,9 +63,9 @@ function handleAddCountry() {
     event.preventDefault();
     let readInput = $("#countriesList").val();
     watchList[readInput] = 1;
-    console.log("country to add: ", readInput);
-    console.log("watchList: ", watchList);
+    console.log("added country to watchlist");
   });
+  console.log("handling add country button");
 }
 
 function checkCachedData() {
@@ -79,17 +79,11 @@ function updateGraph() {
   let labelsArray = [];
   checkCachedData();
   let firstCache = Object.keys(cachedData)[0];
-  console.log("firstCache: ", firstCache);
-  console.log("cachedData[afg]: ", cachedData[firstCache]);
 
   for (const property in cachedData[firstCache]) {
-    console.log("property: ", property);
     labelsArray.push(property);
-    dataArray.push(firstCache[property]);
+    dataArray.push(cachedData[firstCache][`${property}`]);
   }
-
-  console.log("dataArray: ", dataArray);
-  console.log("labelsArray: ", labelsArray);
 
   chart = new Chart(ctx, {
     // The type of chart we want to create
@@ -111,10 +105,13 @@ function updateGraph() {
     // Configuration options go here
     options: {},
   });
+  console.log("labels array: ", labelsArray);
+  console.log("data array: ", dataArray);
+  console.log("graph updated");
 }
 
-function getData(countryName) {
-  fetch(decodeURI(baseURL + `historical/${countryName}`))
+async function getData(countryName) {
+  await fetch(decodeURI(baseURL + `historical/${countryName}`))
     .then(function (result) {
       if (!result.ok) {
         console.log("Server may be downed or country data not found.");
@@ -125,38 +122,35 @@ function getData(countryName) {
     .then(function (result) {
       let interList = JSON.parse(result);
       cachedData[`${interList.country}`] = interList.timeline.cases;
-      checkCachedData();
+      console.log("got data using fetch");
     });
 }
 
-function updateCache() {
+async function updateCache() {
   for (const property in watchList) {
     if (!(property in cachedData)) {
-      getData(`${property}`);
+      console.log("calling getData from updateCache function");
+      await getData(`${property}`);
     }
   }
-
+  console.log("cache updated");
   return new Promise(function (resolve, reject) {
-    resolve("test");
-    console.log("cache updated");
+    resolve("Yes");
   });
 }
 
 function handleUpdateGraph() {
   // called by handleEverything
-  $("#graphDiv").on("click", "#updateGraph", function (event) {
+  $("#graphDiv").on("click", "#updateGraph", async function (event) {
     event.preventDefault();
-    updateCache().then(function (result) {
-      updateGraph();
-    });
-    // updateGraph();
-    console.log("update graph handled");
+    await updateCache();
+    updateGraph();
   });
 }
 
 function handleEverything() {
-  handleAddCountry();
   drawCountryList();
+  handleAddCountry();
   handleUpdateGraph();
   console.log("everything handled");
 }
