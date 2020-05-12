@@ -89,31 +89,54 @@ function handleTimeFrame() {
 }
 
 function updateGraph(timeFrame) {
-  let dataArray = [];
   let labelsArray = [];
-  checkCachedData();
-  let firstCache = Object.keys(cachedData)[0];
-
-  console.log("timeframe: ", timeFrame);
-
-  // for (const property in cachedData[firstCache]) {
-  //   labelsArray.push(property);
-  //   dataArray.push(cachedData[firstCache][`${property}`]);
-  // }
-
+  let datasetsArray = [];
+  let firstCacheItem = Object.keys(cachedData)[0];
   if (timeFrame === "-1") {
-    console.log("here");
-    for (const property in cachedData[firstCache]) {
+    for (const property in cachedData[firstCacheItem]) {
       labelsArray.push(property);
-      dataArray.push(cachedData[firstCache][`${property}`]);
     }
   } else {
-    console.log("there");
-    labelsArray = Object.keys(cachedData[firstCache]).slice(-timeFrame); // gives the last [timeFrame] number of entries of the dates of cases
-    labelsArray.forEach(function (element) {
-      dataArray.push(cachedData[firstCache][`${element}`]);
-    }); // gives the last [timeFrame] number of entries of # of cases for the corresponding days
+    labelsArray = Object.keys(cachedData[firstCacheItem]).slice(-timeFrame); // gives the last [timeFrame] number of entries of the dates of cases
   }
+
+  for (let j = 0; j < Object.keys(cachedData).length; ++j) {
+    let dataArray = [];
+    let currentCacheItem = Object.keys(cachedData)[j];
+
+    if (timeFrame === "-1") {
+      for (const property in cachedData[currentCacheItem]) {
+        dataArray.push(cachedData[currentCacheItem][`${property}`]);
+      }
+    } else {
+      labelsArray.forEach(function (element) {
+        dataArray.push(cachedData[currentCacheItem][`${element}`]);
+      }); // gives the last [timeFrame] number of entries of # of cases for the corresponding days
+    }
+    console.log("pushing to datasetsArray");
+    datasetsArray.push({
+      label: `${currentCacheItem}`,
+      backgroundColor: `rgb(${255 - j * 70}, ${0 + j * 70}, ${0 + j * 70})`,
+      borderColor: "rgb(0, 0, 0)",
+      data: dataArray,
+    });
+  }
+  // let dataArray = [];
+  // let labelsArray = [];
+  // checkCachedData();
+  // let firstCache = Object.keys(cachedData)[0];
+
+  // if (timeFrame === "-1") {
+  //   for (const property in cachedData[firstCache]) {
+  //     labelsArray.push(property);
+  //     dataArray.push(cachedData[firstCache][`${property}`]);
+  //   }
+  // } else {
+  //   labelsArray = Object.keys(cachedData[firstCache]).slice(-timeFrame); // gives the last [timeFrame] number of entries of the dates of cases
+  //   labelsArray.forEach(function (element) {
+  //     dataArray.push(cachedData[firstCache][`${element}`]);
+  //   }); // gives the last [timeFrame] number of entries of # of cases for the corresponding days
+  // }
 
   chart = new Chart(ctx, {
     // The type of chart we want to create
@@ -122,21 +145,24 @@ function updateGraph(timeFrame) {
     // The data for our dataset
     data: {
       labels: labelsArray,
-      datasets: [
-        {
-          label: `${firstCache}`,
-          backgroundColor: "rgb(255, 0, 0)",
-          borderColor: "rgb(0, 0, 0)",
-          data: dataArray,
-        },
-      ],
+      datasets: datasetsArray,
+      // datasets: [
+      //   {
+      //     label: `${firstCache}`,
+      //     backgroundColor: "rgb(255, 0, 0)",
+      //     borderColor: "rgb(0, 0, 0)",
+      //     data: dataArray,
+      //   },
+      // ],
     },
 
     // Configuration options go here
     options: chartOptions,
   });
   console.log("labels array: ", labelsArray);
-  console.log("data array: ", dataArray);
+  datasetsArray.forEach(function (item) {
+    console.log("datasetsArrayItem: ", item);
+  });
   console.log("graph updated");
 }
 
