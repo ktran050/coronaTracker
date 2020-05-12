@@ -2,6 +2,16 @@
 const baseURL = "https://disease.sh/v2/";
 let cachedData = {};
 let watchList = {};
+
+const chartOptions = {
+  legend: { labels: { fontColor: "black" } },
+  title: {
+    text: "Corona Virus Cases",
+    display: true,
+    fontColor: "black",
+  },
+};
+
 let initLabelsArray = [
   "January",
   "February",
@@ -23,16 +33,16 @@ var chart = new Chart(ctx, {
     labels: initLabelsArray,
     datasets: [
       {
-        label: "Historical Graph of Corona Virus Cases: United States",
-        backgroundColor: "rgb(255, 99, 132)",
-        borderColor: "rgb(255, 99, 132)",
+        label: "US Cases",
+        backgroundColor: "rgb(255, 0, 0)",
+        borderColor: "rgb(0, 0, 0)",
         data: initDataArray,
       },
     ],
   },
 
   // Configuration options go here
-  options: {},
+  options: chartOptions,
 });
 
 function drawCountryList() {
@@ -74,15 +84,35 @@ function checkCachedData() {
   }
 }
 
-function updateGraph() {
+function handleTimeFrame() {
+  return $("#timeFrame").val();
+}
+
+function updateGraph(timeFrame) {
   let dataArray = [];
   let labelsArray = [];
   checkCachedData();
   let firstCache = Object.keys(cachedData)[0];
 
-  for (const property in cachedData[firstCache]) {
-    labelsArray.push(property);
-    dataArray.push(cachedData[firstCache][`${property}`]);
+  console.log("timeframe: ", timeFrame);
+
+  // for (const property in cachedData[firstCache]) {
+  //   labelsArray.push(property);
+  //   dataArray.push(cachedData[firstCache][`${property}`]);
+  // }
+
+  if (timeFrame === "-1") {
+    console.log("here");
+    for (const property in cachedData[firstCache]) {
+      labelsArray.push(property);
+      dataArray.push(cachedData[firstCache][`${property}`]);
+    }
+  } else {
+    console.log("there");
+    labelsArray = Object.keys(cachedData[firstCache]).slice(-timeFrame); // gives the last [timeFrame] number of entries of the dates of cases
+    labelsArray.forEach(function (element) {
+      dataArray.push(cachedData[firstCache][`${element}`]);
+    }); // gives the last [timeFrame] number of entries of # of cases for the corresponding days
   }
 
   chart = new Chart(ctx, {
@@ -94,16 +124,16 @@ function updateGraph() {
       labels: labelsArray,
       datasets: [
         {
-          label: "Historical Graph of Corona Virus Cases: United States",
-          backgroundColor: "rgb(255, 99, 132)",
-          borderColor: "rgb(255, 99, 132)",
+          label: `${firstCache}`,
+          backgroundColor: "rgb(255, 0, 0)",
+          borderColor: "rgb(0, 0, 0)",
           data: dataArray,
         },
       ],
     },
 
     // Configuration options go here
-    options: {},
+    options: chartOptions,
   });
   console.log("labels array: ", labelsArray);
   console.log("data array: ", dataArray);
@@ -143,8 +173,9 @@ function handleUpdateGraph() {
   // called by handleEverything
   $("#graphDiv").on("click", "#updateGraph", async function (event) {
     event.preventDefault();
+    let timeFrame = handleTimeFrame();
     await updateCache();
-    updateGraph();
+    updateGraph(timeFrame);
   });
 }
 
