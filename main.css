@@ -22,9 +22,9 @@ main {
   text-align: center;
 }
 
-#tempGraph {
-  height: 300px;
-  width: 300px;
+.graph {
+  height: 45vw !important;
+  width: 90vw !important;
   background: black;
   margin: 0 auto;
 }
