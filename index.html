@@ -16,35 +16,21 @@
       <main>
         <div id="optionsDiv" class="tempDiv">
           <h2>optionsDiv</h2>
-          <div>
-            <select id="countriesList">
-              <option>country</option>
+          <div id="viewOptions">
+            <h3>Time Frame</h3>
+            <select id="timeFrame">
+              <option value="-1" selected>Choose a time frame</option>
+              <option value="0">All time</option>
+              <option value="7">Last 7 days</option>
+              <option value="30">Last 30 days</option>
+              <option value="365">Last 365 days</option>
             </select>
-            <button id="addCountry">Add Country</button>
+          </div>
+          <div id="groupOptions">
+            <button id="addGroup">Add Group</button>
           </div>
         </div>
-        <div id="graphDiv" class="tempDiv">
-          <h2>graphDiv</h2>
-          <canvas id="chart" class="graph"></canvas>
-          <select id="timeFrame">
-            <option value="365">Last 365 days</option>
-            <option value="30">Last 30 days</option>
-            <option value="7">Last 7 days</option>
-            <option value="-1" selected>All time</option>
-          </select>
-          <button id="updateGraph">Update Graph</button>
-        </div>
-        <div id="legendDiv" class="tempDiv">
-          <h2>legendDiv</h2>
-          <ul>
-            Countries
-            <li>Country A</li>
-          </ul>
-          <ul>
-            Groups
-            <li>Group A</li>
-          </ul>
-        </div>
+        <div id="groupContainer" class="tempDiv"></div>
       </main>
       <footer>Links</footer>
     </div>
