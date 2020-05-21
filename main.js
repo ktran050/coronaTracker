@@ -27,6 +27,24 @@ function findMissingKeys(objectA, objectB) {
   return keyArray;
 }
 
+function handleTimeFrame() {
+  $("main").on("click", "#timeFrame", function (event) {
+    event.preventDefault();
+    const selectValue = $(this).val();
+    // since we only have <= 6 graphs the last char for each element in the card is the id of the overall card, all elements have ids ending with this number
+    if (selectValue === "-1") {
+      // the first option in the select has value "-1" and is a non-option
+      return;
+    }
+    timeFrame = selectValue;
+    console.log("timeFrame set");
+    for (let i = 1; i < chartCount; ++i) {
+      const graphData = prepareGraphData(timeFrame, i);
+      drawGraph(i, graphData[0], graphData[1]);
+    }
+  });
+}
+
 async function getCountryList() {
   // called at the start of the script
   let resultHTML =
@@ -57,139 +75,133 @@ function checkCachedData() {
   }
 }
 
-async function getData(countryName) {
-  await fetch(decodeURI(baseURL + `historical/${countryName}`))
+function getData(countryName) {
+  console.log("getData called");
+  return fetch(decodeURI(baseURL + `historical/${countryName}`))
     .then(function (result) {
       if (!result.ok) {
-        console.log("Server may be downed or country data not found.");
+        console.log("Server may be down or country data not found.");
       } else {
-        return result.text();
+        return result.json();
       }
     })
-    .then(function (result) {
-      let interList = JSON.parse(result);
-      cachedData[`${interList.country}`] = interList.timeline.cases;
-      checkCachedData();
-      console.log("got data using fetch");
+    .catch((error) => {
+      console.log("Error: ", error);
     });
 }
 
-async function updateCache() {
-  let countriesNotCached = findMissingKeys(masterWatchList, cachedData);
-  for (let i = 0; i < countriesNotCached.length; ++i) {
-    await getData(countriesNotCached[i]);
-  }
-  // countriesNotCached.forEach(async function (country) {
-  //   await getData(country);
-  //   console.log("cache updated");
-  // }
-  // );
+async function getAllData() {
+  const countriesNotCached = findMissingKeys(masterWatchList, cachedData);
+  return await Promise.all(
+    countriesNotCached.map((country) => {
+      return getData(country).catch((error) => {
+        console.log("Error: ", error);
+      });
+    })
+  );
 }
 
-function handleTimeFrame() {
-  $("main").on("click", "#timeFrame", function (event) {
-    event.preventDefault();
-    let selectValue = $(this).val();
-    // since we only have <= 6 graphs the last char for each element in the card is the id of the overall card, all elements have ids ending with this number
-    if (selectValue === "-1") {
-      // the first option in the select has value "-1" and is a non-option
-      return;
-    }
-    timeFrame = selectValue;
-    console.log("timeFrame set: ", timeFrame);
-  });
+function updateCache(data) {
+  for (let i = 0; i < data.length; ++i) {
+    const currentElement = data[i];
+    if (currentElement)
+      cachedData[currentElement.country] = currentElement.timeline.cases;
+  }
 }
 
 function checkTimeFrame() {
   return timeFrame;
 }
 
-function updateGraph(timeFrame, chartNum) {
+function prepareGraphData(timeFrame, chartNum) {
   let labelsArray = [];
-  let datasetsArray = [];
-  let firstCacheItem = Object.keys(cachedData)[0];
+  let dataArray = [];
+  let datasetArray = [];
+  const firstCacheItem = Object.keys(cachedData)[0];
   if (timeFrame === "0") {
-    console.log("here");
-    checkCachedData();
-    console.log("here");
     for (const property in cachedData[firstCacheItem]) {
       labelsArray.push(property);
-      console.log("here");
     }
   } else {
-    console.log("timeFrame: ", timeFrame);
     labelsArray = Object.keys(cachedData[firstCacheItem]).slice(-timeFrame); // gives the last [timeFrame] number of entries of the dates of cases
   }
-
-  for (let j = 0; j < Object.keys(cachedData).length; ++j) {
-    let dataArray = [];
-    let currentCacheItem = Object.keys(cachedData)[j];
-
+  dataArray = new Array(labelsArray.length).fill(0);
+  for (let i = 0; i < Object.keys(watchList[chartNum]).length; ++i) {
+    let thisCountry = Object.keys(watchList[chartNum])[i];
     if (timeFrame === "0") {
-      for (const property in cachedData[currentCacheItem]) {
-        dataArray.push(cachedData[currentCacheItem][`${property}`]);
+      for (let j = 0; j < labelsArray.length; ++j) {
+        dataArray[j] +=
+          cachedData[thisCountry][Object.keys(cachedData[thisCountry])[j]];
       }
     } else {
-      labelsArray.forEach(function (element) {
-        dataArray.push(cachedData[currentCacheItem][`${element}`]);
-      }); // gives the last [timeFrame] number of entries of # of cases for the corresponding days
+      let data = Object.keys(cachedData[thisCountry]).slice(-timeFrame);
+      console.log("data: ", data);
+      for (let j = 0; j < timeFrame; ++j) {
+        dataArray[j] += cachedData[thisCountry][data[j]];
+      }
     }
-    console.log("pushing to datasetsArray");
-    datasetsArray.push({
-      label: `${currentCacheItem}`,
-      backgroundColor: `rgb(${255 - j * 70}, ${0 + j * 70}, ${0 + j * 70})`,
+  }
+  datasetArray = [
+    {
+      label: `Graph${chartNum}`,
+      backgroundColor: `rgb(${255}, ${0}, ${0})`,
       borderColor: "rgb(0, 0, 0)",
       data: dataArray,
-    });
-  }
+    },
+  ];
+  return [labelsArray, datasetArray];
+}
 
-  let ctx = document.getElementById(`chart${chartNum}`).getContext("2d");
+function drawGraph(chartNum, labelsArray, datasetArray) {
+  const ctx = document.getElementById(`chart${chartNum}`).getContext("2d");
 
-  let chart = new Chart(ctx, {
+  const chart = new Chart(ctx, {
     // The type of chart we want to create
     type: "line",
 
     // The data for our dataset
     data: {
       labels: labelsArray,
-      datasets: datasetsArray,
+      datasets: datasetArray,
     },
 
     // Configuration options go here
     options: chartOptions,
   });
-  console.log("labels array: ", labelsArray);
-  datasetsArray.forEach(function (item) {
-    console.log("datasetsArrayItem: ", item);
-  });
-  console.log("graph updated");
 }
-async function handleUpdateGraph(chartNum) {
-  // called by handleEverything
-  let timeFrame = checkTimeFrame();
-  await updateCache();
-  updateGraph(timeFrame, chartNum);
+
+function updateWatchLists(cardNum, selectValue) {
+  if (!(watchList[cardNum] instanceof Object)) {
+    watchList[cardNum] = new Object({});
+  }
+  watchList[cardNum][`${selectValue}`] = 1;
+  masterWatchList[selectValue] = 1;
+  console.log("selectValue: ", selectValue);
 }
 
 function handleAddCountry() {
   // called by handleEverything
-  $("main").on("click", ".countryList", function (event) {
+  $("main").on("click", ".addCountryButton", async function (event) {
     event.preventDefault();
-    let selectValue = $(this).val();
-    let idOfThis = $(this).attr("id");
-    let cardNum = idOfThis[idOfThis.length - 1];
+    const idOfThis = $(this).attr("id");
+    console.log("idOfThis", idOfThis);
+    const cardNum = idOfThis[idOfThis.length - 1];
+    const targetId = $(`#js-target${cardNum}`);
+    const selectValue = targetId.val();
     // since we only have <= 6 graphs the last char for each element in the card is the id of the overall card, all elements have ids ending with this number
     if (selectValue === "-1") {
       // the first option in the select has value "-1" and is a non-option
       return;
+    } else {
+      updateWatchLists(cardNum, selectValue);
     }
-    if (!(watchList[idOfThis] instanceof Object)) {
-      // if the watchlist for the current card doesn't exist create it
-      watchList[idOfThis] = new Object({});
-    }
-    watchList[idOfThis][`${selectValue}`] = 1;
-    masterWatchList[selectValue] = 1;
-    handleUpdateGraph(cardNum);
+    getAllData()
+      .then((data) => {
+        updateCache(data);
+        const graphData = prepareGraphData(checkTimeFrame(), cardNum);
+        drawGraph(cardNum, graphData[0], graphData[1]);
+      })
+      .catch((error) => console.log("Error: ", error));
   });
 }
 
@@ -203,9 +215,10 @@ function addGroup() {
     $("#groupContainer").append(`
     <div class="group">
     <h2>graphDiv</h2>
-    <div id="countryOptions${chartCount}">
-      <select id="countryList${chartCount}" class="countryList">${countryList}</select>
-    </div>
+    <form id="countryOptions${chartCount}">
+      <select id="js-target${chartCount}" class="countryList">${countryList}</select>
+      <button id="addCountryButton${chartCount}" class="addCountryButton">Add Country</button>
+    </form>
     <canvas id="chart${chartCount}" class="graph"></canvas>
     </div>
     `);
@@ -217,15 +230,15 @@ function addGroup() {
 }
 
 function handleAddGroup() {
-  $("main").on("click", "#addGroup", function (event) {
+  $("main").on("click", "#addGroup", (event) => {
     event.preventDefault();
     addGroup();
   });
 }
 
 async function handleEverything() {
-  handleTimeFrame();
   await getCountryList();
+  handleTimeFrame();
   handleAddCountry();
   handleAddGroup();
   addGroup();
