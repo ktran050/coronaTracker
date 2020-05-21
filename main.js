@@ -77,7 +77,7 @@ function checkCachedData() {
 
 function getData(countryName) {
   console.log("getData called");
-  return fetch(decodeURI(baseURL + `historical/${countryName}`))
+  return fetch(decodeURI(baseURL + `historical/${countryName}?lastdays=1000`))
     .then(function (result) {
       if (!result.ok) {
         console.log("Server may be down or country data not found.");
