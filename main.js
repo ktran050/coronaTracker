@@ -38,9 +38,11 @@ function handleTimeFrame() {
     }
     timeFrame = selectValue;
     console.log("timeFrame set");
-    for (let i = 1; i < chartCount; ++i) {
-      const graphData = prepareGraphData(timeFrame, i);
-      drawGraph(i, graphData[0], graphData[1]);
+    for (let i = 0; i < chartCount; ++i) {
+      if (Object.keys(cachedData).length !== 0) {
+        const graphData = prepareGraphData(timeFrame, i);
+        drawGraph(i, graphData[0], graphData[1]);
+      }
     }
   });
 }
