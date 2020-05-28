@@ -41,6 +41,23 @@ footer {
   text-align: center;
 }
 
+.visible {
+  visibility: visible;
+}
+
+.invisible {
+  visibility: hidden;
+}
+
 .tempDiv {
   border: 1px black solid;
+}
+
+.ui-widget-header,
+.ui-state-default,
+ui-button {
+  background: #b9cd6d;
+  border: 1px solid #b9cd6d;
+  color: #ffffff;
+  font-weight: bold;
 }

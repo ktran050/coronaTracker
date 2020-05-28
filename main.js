@@ -83,6 +83,7 @@ function getData(countryName) {
     .then(function (result) {
       if (!result.ok) {
         console.log("Server may be down or country data not found.");
+        window.alert(`Data not found for country: ${countryName}`);
       } else {
         return result.json();
       }
@@ -206,6 +207,12 @@ function handleRemoveCountry() {
   $("main").on("click", ".removeButton", function (event) {
     event.preventDefault();
     const cardNum = $(this).attr("id")[0];
+    const country = $(this).attr("id").substr(1);
+    delete watchList[cardNum][country];
+    delete masterWatchList[country];
+    drawWatchList(cardNum);
+    const graphData = prepareGraphData(checkTimeFrame(), cardNum);
+    drawGraph(cardNum, graphData[0], graphData[1]);
     console.log("handleRemoveCountry cardNum: ", cardNum);
   });
 }
