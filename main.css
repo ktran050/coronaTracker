@@ -22,6 +22,10 @@ main {
   text-align: center;
 }
 
+.watchList {
+  list-style: none;
+}
+
 .graph {
   height: 45vw !important;
   width: 90vw !important;

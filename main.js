@@ -38,8 +38,8 @@ function handleTimeFrame() {
     }
     timeFrame = selectValue;
     console.log("timeFrame set");
-    for (let i = 0; i < chartCount; ++i) {
-      if (Object.keys(cachedData).length !== 0) {
+    if (Object.keys(cachedData).length) {
+      for (let i = 0; i < chartCount; ++i) {
         const graphData = prepareGraphData(timeFrame, i);
         drawGraph(i, graphData[0], graphData[1]);
       }
@@ -154,6 +154,14 @@ function prepareGraphData(timeFrame, chartNum) {
   return [labelsArray, datasetArray];
 }
 
+function drawWatchList(cardNum) {
+  let watchListHtml = "";
+  for (const country in watchList[cardNum]) {
+    watchListHtml += `<li>${country}</li>`;
+  }
+  $(`#watchList${cardNum}`).html(watchListHtml);
+}
+
 function drawGraph(chartNum, labelsArray, datasetArray) {
   const ctx = document.getElementById(`chart${chartNum}`).getContext("2d");
 
@@ -203,6 +211,9 @@ function handleAddCountry() {
         const graphData = prepareGraphData(checkTimeFrame(), cardNum);
         drawGraph(cardNum, graphData[0], graphData[1]);
       })
+      .then(() => {
+        drawWatchList(cardNum);
+      })
       .catch((error) => console.log("Error: ", error));
   });
 }
@@ -222,6 +233,9 @@ function addGroup() {
       <button id="addCountryButton${chartCount}" class="addCountryButton">Add Country</button>
     </form>
     <canvas id="chart${chartCount}" class="graph"></canvas>
+    <ul id="watchList${chartCount}" class="watchList">
+      <li>watchList${chartCount}</li>
+    </ul>
     </div>
     `);
     chartCount += 1;
