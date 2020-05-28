@@ -62,8 +62,8 @@ async function getCountryList() {
     .then(function (result) {
       let interList = [];
       interList = JSON.parse(result);
-      for (let i = 0; i < interList.length; ++i) {
-        resultHTML += `<option class="countryListOption">${interList[i].country}</option>`;
+      for (const element of interList) {
+        resultHTML += `<option class="countryListOption">${element.country}</option>`;
       }
       $("#countriesList").html(resultHTML);
       countryList = `${resultHTML}`;
@@ -104,10 +104,10 @@ async function getAllData() {
 }
 
 function updateCache(data) {
-  for (let i = 0; i < data.length; ++i) {
-    const currentElement = data[i];
-    if (currentElement)
-      cachedData[currentElement.country] = currentElement.timeline.cases;
+  for (const element of data) {
+    if (element) {
+      cachedData[element.country] = element.timeline.cases;
+    }
   }
 }
 
@@ -143,6 +143,19 @@ function prepareGraphData(timeFrame, chartNum) {
       }
     }
   }
+  // for (const country in watchList[chartNum]) {
+  //   if (timeFrame === "0") {
+  //     dataArray = dataArray.map(
+  //       (entry, index) => entry + Object.keys(cachedData[country])[index]
+  //     );
+  //   } else {
+  //     let data = Object.keys(cachedData[thisCountry]).slice(-timeFrame);
+  //     console.log("data: ", data);
+  //     for (let j = 0; j < timeFrame; ++j) {
+  //       dataArray[j] += cachedData[thisCountry][data[j]];
+  //     }
+  //   }
+  // }
   datasetArray = [
     {
       label: `Graph${chartNum}`,
@@ -157,7 +170,7 @@ function prepareGraphData(timeFrame, chartNum) {
 function drawWatchList(cardNum) {
   let watchListHtml = "";
   for (const country in watchList[cardNum]) {
-    watchListHtml += `<li>${country}</li>`;
+    watchListHtml += `<div><li">${country}<button id="${cardNum}${country}" class="removeButton">Remove Country</button></li></div>`;
   }
   $(`#watchList${cardNum}`).html(watchListHtml);
 }
