@@ -202,6 +202,14 @@ function updateWatchLists(cardNum, selectValue) {
   console.log("selectValue: ", selectValue);
 }
 
+function handleRemoveCountry() {
+  $("main").on("click", ".removeButton", function (event) {
+    event.preventDefault();
+    const cardNum = $(this).attr("id")[0];
+    console.log("handleRemoveCountry cardNum: ", cardNum);
+  });
+}
+
 function handleAddCountry() {
   // called by handleEverything
   $("main").on("click", ".addCountryButton", async function (event) {
@@ -220,12 +228,10 @@ function handleAddCountry() {
     }
     getAllData()
       .then((data) => {
+        drawWatchList(cardNum);
         updateCache(data);
         const graphData = prepareGraphData(checkTimeFrame(), cardNum);
         drawGraph(cardNum, graphData[0], graphData[1]);
-      })
-      .then(() => {
-        drawWatchList(cardNum);
       })
       .catch((error) => console.log("Error: ", error));
   });
@@ -270,6 +276,7 @@ async function handleEverything() {
   handleTimeFrame();
   handleAddCountry();
   handleAddGroup();
+  handleRemoveCountry();
   addGroup();
   console.log("everything handled");
 }
