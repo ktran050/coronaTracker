@@ -121,13 +121,14 @@ function prepareGraphData(timeFrame, chartNum) {
   let dataArray = [];
   let datasetArray = [];
   const chartColors = [
+    `rgb(78,26,34)`,
     `rgb(86,29,37)`,
-    `rgb(206,129,71)`,
     `rgb(236,221,123)`,
-    `rgb(211,226,152)`,
     `rgb(205,231,190)`,
-    `rgb(46,82,102)`,
+    `rgb(65,98,116)`,
+    `rgb(82,112,129)`,
   ];
+
   const firstCacheItem = Object.keys(cachedData)[0];
   if (timeFrame === "0") {
     for (const property in cachedData[firstCacheItem]) {
