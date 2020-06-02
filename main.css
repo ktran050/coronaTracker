@@ -3,23 +3,55 @@
   padding: 0;
 }
 
+html {
+  background-color: #293035;
+}
+
 .container {
   display: flex;
   flex-direction: column;
+  width: 90vw;
+  margin: 0 auto;
 }
 
 header {
   position: relative;
   top: 0px;
   height: 67px;
-  background-color: blue;
   text-align: center;
+  color: white;
+  padding: 20px;
 }
 
 main {
-  background-color: green;
   min-height: 85vh;
   text-align: center;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-color: #2d363b;
+}
+
+main > div {
+  margin: 5px;
+  color: white;
+}
+
+#groupContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+#groupContainer > div {
+  margin: 5px;
+  background-color: #45535a;
+  padding: 20px;
+}
+
+.round-corners {
+  border-radius: 10px;
 }
 
 .watchList {
@@ -28,17 +60,39 @@ main {
 
 .graph {
   height: 45vw !important;
-  width: 90vw !important;
+  width: 80%;
   background: black;
   margin: 0 auto;
+}
+
+@media screen and (min-width: 800px) {
+  .graph {
+    width: 70vw !important;
+  }
 }
 
 footer {
   position: relative;
   bottom: 0px;
   height: 33px;
-  background-color: red;
   text-align: center;
+  padding: 20px;
+  color: white;
+}
+
+#addGroup {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  height: 50px;
+  width: 50px;
+  border-radius: 50%;
+  border-color: white;
+  z-index: 100;
+}
+
+.selectStyle {
+  max-width: 50%;
 }
 
 .visible {
@@ -51,13 +105,4 @@ footer {
 
 .tempDiv {
   border: 1px black solid;
-}
-
-.ui-widget-header,
-.ui-state-default,
-ui-button {
-  background: #b9cd6d;
-  border: 1px solid #b9cd6d;
-  color: #ffffff;
-  font-weight: bold;
 }

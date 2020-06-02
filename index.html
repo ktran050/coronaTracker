@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Home</title>
+    <title>Graph</title>
     <link rel="stylesheet" href="main.css" />
     <script src="https://code.jquery.com/jquery-1.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
@@ -11,13 +11,11 @@
   <body>
     <div id="container" class="container">
       <header>
-        <div><h1>Title</h1></div>
+        <div><h1>Covid-19 Case Tracker</h1></div>
       </header>
-      <main>
-        <div id="optionsDiv" class="tempDiv">
-          <h2>optionsDiv</h2>
+      <main class="round-corners">
+        <div id="optionsDiv" class="round-corners">
           <form id="viewOptions">
-            <h3>Time Frame</h3>
             <select id="timeFrame">
               <option value="-1" selected>Choose a time frame</option>
               <option value="0">All time</option>
@@ -26,11 +24,9 @@
               <option value="365">Last 365 days</option>
             </select>
           </form>
-          <form id="groupOptions">
-            <button id="addGroup">Add Group</button>
-          </form>
+          <button id="addGroup">+</button>
         </div>
-        <div id="groupContainer" class="tempDiv"></div>
+        <div id="groupContainer" class="round-corners"></div>
       </main>
       <footer>Links</footer>
     </div>

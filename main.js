@@ -7,6 +7,15 @@ let countryList = "";
 let chartCount = 0;
 let timeFrame = "0";
 
+const cardColors = [
+  `rgb(78,26,34)`,
+  `rgb(236,221,123)`,
+  `rgb(206, 129, 71)`,
+  `rgb(205,231,190)`,
+  `rgb(65,98,116)`,
+  `rgb(86,29,37)`,
+];
+
 const chartOptions = {
   legend: { labels: { fontColor: "white" } },
   title: {
@@ -14,7 +23,17 @@ const chartOptions = {
     display: true,
     fontColor: "white",
   },
+  scales: {
+    ticks: [{ autoSkip: true }],
+  },
 };
+
+function fillCanvas(color, canvasId) {
+  const canvas = document.getElementById(`${canvasId}`);
+  const ctx = canvas.getContext("2d");
+  ctx.fillStyle = `${color}`;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+}
 
 function findMissingKeys(objectA, objectB) {
   // returns an array of keys that A HAS and B DOES NOT
@@ -120,14 +139,6 @@ function prepareGraphData(timeFrame, chartNum) {
   let labelsArray = [];
   let dataArray = [];
   let datasetArray = [];
-  const chartColors = [
-    `rgb(78,26,34)`,
-    `rgb(86,29,37)`,
-    `rgb(236,221,123)`,
-    `rgb(205,231,190)`,
-    `rgb(65,98,116)`,
-    `rgb(82,112,129)`,
-  ];
 
   const firstCacheItem = Object.keys(cachedData)[0];
   if (timeFrame === "0") {
@@ -169,11 +180,16 @@ function prepareGraphData(timeFrame, chartNum) {
   datasetArray = [
     {
       label: `Graph${chartNum}`,
-      backgroundColor: chartColors[`${chartNum}`],
+      backgroundColor: cardColors[`${chartNum}`],
       borderColor: "rgb(0, 0, 0)",
       data: dataArray,
     },
   ];
+  console.log(
+    `chartNum: ${chartNum}`,
+    "chartColor: ",
+    cardColors[`${chartNum}`]
+  );
   return [labelsArray, datasetArray];
 }
 
@@ -187,6 +203,7 @@ function drawWatchList(cardNum) {
 
 function drawGraph(chartNum, labelsArray, datasetArray) {
   const ctx = document.getElementById(`chart${chartNum}`).getContext("2d");
+  // ctx.clearRect();
 
   const chart = new Chart(ctx, {
     // The type of chart we want to create
@@ -215,13 +232,21 @@ function updateWatchLists(cardNum, selectValue) {
 function handleRemoveCountry() {
   $("main").on("click", ".removeButton", function (event) {
     event.preventDefault();
-    const cardNum = $(this).attr("id")[0];
-    const country = $(this).attr("id").substr(1);
+    const thisId = $(this).attr("id");
+    const cardNum = thisId[0];
+    const country = thisId.substr(1);
+    const color = cardColors[cardNum];
     delete watchList[cardNum][country];
     delete masterWatchList[country];
     drawWatchList(cardNum);
     const graphData = prepareGraphData(checkTimeFrame(), cardNum);
-    drawGraph(cardNum, graphData[0], graphData[1]);
+    if ($.isEmptyObject(watchList[cardNum])) {
+      fillCanvas(color, `chart${cardNum}`);
+    } else {
+      console.log("here");
+      drawGraph(cardNum, graphData[0], graphData[1]);
+      console.log(watchList[cardNum]);
+    }
     console.log("handleRemoveCountry cardNum: ", cardNum);
   });
 }
@@ -259,20 +284,22 @@ function handleAddCountry() {
 </datalist> */
 
 function addGroup() {
+  const color = cardColors[chartCount];
+  console.log("color: ", color);
   if (chartCount < 6) {
     $("#groupContainer").append(`
-    <div class="group">
-    <h2>graphDiv</h2>
+    <div class="group round-corners" style="border-left: ${color} 10px solid;">
     <form id="countryOptions${chartCount}">
-      <select id="js-target${chartCount}" class="countryList">${countryList}</select>
+      <select id="js-target${chartCount}" class="countryList selectStyle">${countryList}</select>
       <button id="addCountryButton${chartCount}" class="addCountryButton">Add Country</button>
     </form>
     <canvas id="chart${chartCount}" class="graph"></canvas>
     <ul id="watchList${chartCount}" class="watchList">
-      <li>watchList${chartCount}</li>
+      <li>List of tracked countries for this graph</li>
     </ul>
     </div>
     `);
+    fillCanvas(color, `chart${chartCount}`);
     chartCount += 1;
     console.log("card appended");
   } else {
