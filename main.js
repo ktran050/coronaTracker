@@ -7,6 +7,9 @@ let countryList = "";
 let chartCount = 0;
 let timeFrame = "0";
 
+Chart.defaults.global.responsive = true;
+Chart.defaults.global.maintainAspectRatio = false;
+
 const cardColors = [
   `rgb(78,26,34)`,
   `rgb(236,221,123)`,
@@ -17,11 +20,12 @@ const cardColors = [
 ];
 
 const chartOptions = {
-  legend: { labels: { fontColor: "white" } },
+  legend: { labels: { fontColor: "black" } },
+  // chart: { responsive: true },
   title: {
-    text: "Corona Virus Cases",
-    display: true,
-    fontColor: "white",
+    text: "Total number of cases",
+    display: false,
+    fontColor: "black",
   },
   scales: {
     ticks: [{ autoSkip: true }],
@@ -33,6 +37,33 @@ function fillCanvas(color, canvasId) {
   const ctx = canvas.getContext("2d");
   ctx.fillStyle = `${color}`;
   ctx.fillRect(0, 0, canvas.width, canvas.height);
+}
+
+function blankCanvas(chartNum, canvasId) {
+  const canvas = document.getElementById(`${canvasId}`);
+  const ctx = canvas.getContext("2d");
+
+  const chart = new Chart(ctx, {
+    // The type of chart we want to create
+    type: "line",
+
+    // The data for our dataset
+    data: {
+      labels: [],
+      datasets: [
+        {
+          label: `Total cases for this group`,
+          backgroundColor: cardColors[`${chartNum}`],
+          borderColor: "rgb(0, 0, 0)",
+          data: [],
+        },
+      ],
+      backgroundColor: ["white"],
+    },
+
+    // Configuration options go here
+    options: chartOptions,
+  });
 }
 
 function findMissingKeys(objectA, objectB) {
@@ -73,7 +104,7 @@ async function getCountryList() {
   await fetch(baseURL + "countries")
     .then(function (result) {
       if (!result.ok) {
-        console.log("Server may be downed. Data not found");
+        console.log("Server may be down. Data not found");
       } else {
         return result.text();
       }
@@ -91,9 +122,10 @@ async function getCountryList() {
 }
 
 function checkCachedData() {
-  for (const property in cachedData) {
-    console.log("cachedData key/value: ", property, cachedData[property]);
-  }
+  console.log("cachedData", cachedData);
+  // for (const property in cachedData) {
+  //   console.log("cachedData key/value: ", property, cachedData[property]);
+  // }
 }
 
 function getData(countryName) {
@@ -102,6 +134,8 @@ function getData(countryName) {
     .then(function (result) {
       if (!result.ok) {
         console.log("Server may be down or country data not found.");
+        updateInvalidWatchList(countryName);
+        updateInvalidCache([countryName]);
         window.alert(`Data not found for country: ${countryName}`);
       } else {
         return result.json();
@@ -114,13 +148,14 @@ function getData(countryName) {
 
 async function getAllData() {
   const countriesNotCached = findMissingKeys(masterWatchList, cachedData);
-  return await Promise.all(
+  let results = await Promise.all(
     countriesNotCached.map((country) => {
       return getData(country).catch((error) => {
         console.log("Error: ", error);
       });
     })
   );
+  return results.filter((result) => !(result instanceof Error));
 }
 
 function updateCache(data) {
@@ -129,6 +164,10 @@ function updateCache(data) {
       cachedData[element.country] = element.timeline.cases;
     }
   }
+}
+
+function updateInvalidCache(countryName) {
+  cachedData[countryName] = 0;
 }
 
 function checkTimeFrame() {
@@ -153,14 +192,18 @@ function prepareGraphData(timeFrame, chartNum) {
     let thisCountry = Object.keys(watchList[chartNum])[i];
     if (timeFrame === "0") {
       for (let j = 0; j < labelsArray.length; ++j) {
-        dataArray[j] +=
-          cachedData[thisCountry][Object.keys(cachedData[thisCountry])[j]];
+        if (cachedData[thisCountry]) {
+          dataArray[j] +=
+            cachedData[thisCountry][Object.keys(cachedData[thisCountry])[j]];
+        }
       }
     } else {
-      let data = Object.keys(cachedData[thisCountry]).slice(-timeFrame);
-      console.log("data: ", data);
-      for (let j = 0; j < timeFrame; ++j) {
-        dataArray[j] += cachedData[thisCountry][data[j]];
+      if (cachedData[thisCountry]) {
+        let data = Object.keys(cachedData[thisCountry]).slice(-timeFrame);
+        console.log("data: ", data);
+        for (let j = 0; j < timeFrame; ++j) {
+          dataArray[j] += cachedData[thisCountry][data[j]];
+        }
       }
     }
   }
@@ -179,7 +222,7 @@ function prepareGraphData(timeFrame, chartNum) {
   // }
   datasetArray = [
     {
-      label: `Graph${chartNum}`,
+      label: "Total cases",
       backgroundColor: cardColors[`${chartNum}`],
       borderColor: "rgb(0, 0, 0)",
       data: dataArray,
@@ -195,15 +238,20 @@ function prepareGraphData(timeFrame, chartNum) {
 
 function drawWatchList(cardNum) {
   let watchListHtml = "";
+  console.log("HEREREREREEEEE");
+  checkCachedData();
   for (const country in watchList[cardNum]) {
-    watchListHtml += `<div><li">${country}<button id="${cardNum}${country}" class="removeButton">Remove Country</button></li></div>`;
+    if (cachedData[country] !== 0) {
+      watchListHtml += `<div><li">${country}<button id="${cardNum}${country}" class="removeButton">Remove Country</button></li></div>`;
+    } else {
+      watchListHtml += `<div class="noDataCountry"><li">${country}<button id="${cardNum}${country}" class="removeButton">Remove Country</button></li></div>`;
+    }
   }
   $(`#watchList${cardNum}`).html(watchListHtml);
 }
 
 function drawGraph(chartNum, labelsArray, datasetArray) {
   const ctx = document.getElementById(`chart${chartNum}`).getContext("2d");
-  // ctx.clearRect();
 
   const chart = new Chart(ctx, {
     // The type of chart we want to create
@@ -213,11 +261,16 @@ function drawGraph(chartNum, labelsArray, datasetArray) {
     data: {
       labels: labelsArray,
       datasets: datasetArray,
+      backgroundColor: ["white"],
     },
 
     // Configuration options go here
     options: chartOptions,
   });
+}
+
+function updateInvalidWatchList(country) {
+  masterWatchList[country] = 1;
 }
 
 function updateWatchLists(cardNum, selectValue) {
@@ -241,7 +294,8 @@ function handleRemoveCountry() {
     drawWatchList(cardNum);
     const graphData = prepareGraphData(checkTimeFrame(), cardNum);
     if ($.isEmptyObject(watchList[cardNum])) {
-      fillCanvas(color, `chart${cardNum}`);
+      // fillCanvas(color, `chart${cardNum}`);
+      blankCanvas(cardNum, `chart${cardNum}`);
     } else {
       console.log("here");
       drawGraph(cardNum, graphData[0], graphData[1]);
@@ -266,15 +320,15 @@ function handleAddCountry() {
       return;
     } else {
       updateWatchLists(cardNum, selectValue);
+      getAllData()
+        .then((data) => {
+          drawWatchList(cardNum);
+          updateCache(data);
+          const graphData = prepareGraphData(checkTimeFrame(), cardNum);
+          drawGraph(cardNum, graphData[0], graphData[1]);
+        })
+        .catch((error) => console.log("Error: ", error));
     }
-    getAllData()
-      .then((data) => {
-        drawWatchList(cardNum);
-        updateCache(data);
-        const graphData = prepareGraphData(checkTimeFrame(), cardNum);
-        drawGraph(cardNum, graphData[0], graphData[1]);
-      })
-      .catch((error) => console.log("Error: ", error));
   });
 }
 
@@ -288,18 +342,21 @@ function addGroup() {
   console.log("color: ", color);
   if (chartCount < 6) {
     $("#groupContainer").append(`
-    <div class="group round-corners" style="border-left: ${color} 10px solid;">
-    <form id="countryOptions${chartCount}">
-      <select id="js-target${chartCount}" class="countryList selectStyle">${countryList}</select>
-      <button id="addCountryButton${chartCount}" class="addCountryButton">Add Country</button>
+    <div class="group round-corners shadow" style="border-left: ${color} 10px solid;">
+    <form id="countryOptions${chartCount}" class="groupChild countryOption">
+      <select id="js-target${chartCount}" class="countryList selectStyle shadow">${countryList}</select>
+      <button id="addCountryButton${chartCount}" class="addCountryButton shadow">Add Country</button>
     </form>
-    <canvas id="chart${chartCount}" class="graph"></canvas>
-    <ul id="watchList${chartCount}" class="watchList">
+    <div class="graph-wrapper">
+      <canvas id="chart${chartCount}" class="graph groupChild shadow"></canvas>
+    </div>
+    <ul id="watchList${chartCount}" class="watchList groupChild">
       <li>List of tracked countries for this graph</li>
     </ul>
     </div>
     `);
-    fillCanvas(color, `chart${chartCount}`);
+    // fillCanvas(color, `chart${chartCount}`);
+    blankCanvas(chartCount, `chart${chartCount}`);
     chartCount += 1;
     console.log("card appended");
   } else {

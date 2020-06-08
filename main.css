@@ -1,16 +1,21 @@
 * {
   margin: 0;
   padding: 0;
+  font-family: "Roboto", sans-serif;
+  font-size: 18px;
+}
+
+h1 {
+  font-size: 2em;
 }
 
 html {
-  background-color: #293035;
+  background-color: rgb(32, 33, 36);
 }
 
 .container {
   display: flex;
   flex-direction: column;
-  width: 90vw;
   margin: 0 auto;
 }
 
@@ -20,17 +25,15 @@ header {
   height: 67px;
   text-align: center;
   color: white;
-  padding: 20px;
+  padding: 70px 20px 20px 20px;
 }
 
 main {
-  min-height: 85vh;
   text-align: center;
-  padding: 20px;
+  /* padding: 20px; */
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  background-color: #2d363b;
 }
 
 main > div {
@@ -42,12 +45,48 @@ main > div {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  padding: 15px;
 }
 
-#groupContainer > div {
-  margin: 5px;
-  background-color: #45535a;
-  padding: 20px;
+.group {
+  margin: 30px auto;
+  background-color: #292a2d;
+  /* padding: 60px; */
+  display: flex;
+  flex-direction: column;
+  max-width: 95%;
+  box-sizing: border-box;
+  padding: 10px;
+  align-items: center;
+}
+
+@media screen and (min-width: 800px) {
+  #groupContainer {
+    padding: 40px;
+  }
+  .group {
+    padding: 60px;
+    box-sizing: content-box;
+  }
+}
+
+.countryOption > select {
+  margin: 5px 0;
+}
+
+.countryOption > button {
+  margin: 5px 0;
+}
+
+.group:hover {
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+}
+
+.groupChild {
+  margin: 45px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .round-corners {
@@ -58,17 +97,26 @@ main > div {
   list-style: none;
 }
 
-.graph {
-  height: 45vw !important;
-  width: 80%;
-  background: black;
-  margin: 0 auto;
+.graph-wrapper {
+  min-height: 300px;
 }
 
 @media screen and (min-width: 800px) {
-  .graph {
-    width: 70vw !important;
+  .graph-wrapper {
+    min-height: 400px;
+    width: 300px;
   }
+}
+
+.graph {
+  background: rgb(255, 255, 255);
+  margin: 0 auto;
+  width: 200px;
+  min-height: 300px;
+}
+
+.shadow {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
 }
 
 footer {
@@ -80,6 +128,31 @@ footer {
   color: white;
 }
 
+#optionsDiv {
+  position: fixed;
+  right: 10px;
+  bottom: 80px;
+}
+
+#timeFrame {
+  text-align: center;
+  max-width: 150px;
+}
+
+@media screen and (min-width: 800px) {
+  #timeFrame {
+    width: 300px;
+  }
+}
+
+select {
+  padding: 10px;
+}
+
+button {
+  padding: 10px;
+}
+
 #addGroup {
   position: fixed;
   bottom: 20px;
@@ -89,6 +162,10 @@ footer {
   border-radius: 50%;
   border-color: white;
   z-index: 100;
+}
+
+.countryList {
+  min-width: 200px;
 }
 
 .selectStyle {
@@ -105,4 +182,9 @@ footer {
 
 .tempDiv {
   border: 1px black solid;
+}
+
+.noDataCountry {
+  background-color: red;
+  color: black;
 }
