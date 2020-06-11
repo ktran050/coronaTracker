@@ -43,11 +43,10 @@ main {
   flex-wrap: wrap;
   margin: 5px;
   color: white;
-  height: 100%;
 }
 
 .group {
-  margin: 30px auto;
+  margin: 15px auto;
   background-color: #292a2d;
   flex: 1 1 300px;
   display: flex;
@@ -63,6 +62,17 @@ main {
   #groupContainer {
     padding: 40px;
     flex-direction: row;
+    justify-content: space-between;
+  }
+  .group {
+    margin: 15px;
+    box-sizing: content-box;
+  }
+  .graph-wrapper {
+    min-height: 400px;
+  }
+  .graph {
+    width: 350px !important;
   }
 }
 
@@ -81,20 +91,14 @@ main {
 
 .graph-wrapper {
   min-height: 300px;
+  width: 250px !important;
   margin: 10px auto;
-}
-
-@media screen and (min-width: 800px) {
-  .graph-wrapper {
-    min-height: 400px;
-    width: 300px;
-  }
 }
 
 .graph {
   background: rgb(255, 255, 255);
   margin: 0 auto;
-  width: 225px !important;
+  width: 250px !important;
   min-height: 300px;
 }
 
@@ -115,7 +119,7 @@ footer {
   margin-top: 20px;
 }
 
-select {
+select {z`
   padding: 10px;
 }
 
@@ -131,7 +135,6 @@ button {
   width: 50px;
   border-radius: 50%;
   border-color: white;
-  z-index: 100;
 }
 
 .countryOption {
@@ -141,6 +144,7 @@ button {
 .countryList {
   width: 250px;
   margin: 15px auto 10px;
+  padding: 8px;
 }
 
 .visible {
@@ -158,4 +162,8 @@ button {
 .noDataCountry {
   background-color: red;
   color: black;
-} */
+}
+
+#timeFrame {
+  padding: 8px;
+}
