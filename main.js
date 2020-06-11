@@ -87,7 +87,6 @@ function handleTimeFrame() {
       return;
     }
     timeFrame = selectValue;
-    console.log("timeFrame set");
     if (Object.keys(cachedData).length) {
       for (let i = 0; i < chartCount; ++i) {
         const graphData = prepareGraphData(timeFrame, i);
@@ -116,23 +115,13 @@ async function getCountryList() {
       }
       $("#countriesList").html(resultHTML);
       countryList = `${resultHTML}`;
-      console.log("list of countries is gotten");
     });
 }
 
-function checkCachedData() {
-  console.log("cachedData", cachedData);
-  // for (const property in cachedData) {
-  //   console.log("cachedData key/value: ", property, cachedData[property]);
-  // }
-}
-
 function getData(countryName) {
-  console.log("getData called");
   return fetch(decodeURI(baseURL + `historical/${countryName}?lastdays=1000`))
     .then(function (result) {
       if (!result.ok) {
-        console.log("Server may be down or country data not found.");
         updateInvalidWatchList(countryName);
         updateInvalidCache([countryName]);
         window.alert(`Data not found for country: ${countryName}`);
@@ -199,26 +188,12 @@ function prepareGraphData(timeFrame, chartNum) {
     } else {
       if (cachedData[thisCountry]) {
         let data = Object.keys(cachedData[thisCountry]).slice(-timeFrame);
-        console.log("data: ", data);
         for (let j = 0; j < timeFrame; ++j) {
           dataArray[j] += cachedData[thisCountry][data[j]];
         }
       }
     }
   }
-  // for (const country in watchList[chartNum]) {
-  //   if (timeFrame === "0") {
-  //     dataArray = dataArray.map(
-  //       (entry, index) => entry + Object.keys(cachedData[country])[index]
-  //     );
-  //   } else {
-  //     let data = Object.keys(cachedData[thisCountry]).slice(-timeFrame);
-  //     console.log("data: ", data);
-  //     for (let j = 0; j < timeFrame; ++j) {
-  //       dataArray[j] += cachedData[thisCountry][data[j]];
-  //     }
-  //   }
-  // }
   datasetArray = [
     {
       label: "Total cases",
@@ -227,18 +202,11 @@ function prepareGraphData(timeFrame, chartNum) {
       data: dataArray,
     },
   ];
-  console.log(
-    `chartNum: ${chartNum}`,
-    "chartColor: ",
-    cardColors[`${chartNum}`]
-  );
   return [labelsArray, datasetArray];
 }
 
 function drawWatchList(cardNum) {
   let watchListHtml = "";
-  console.log("HEREREREREEEEE");
-  checkCachedData();
   for (const country in watchList[cardNum]) {
     if (cachedData[country] !== 0) {
       watchListHtml += `<div><li">${country}<button id="${cardNum}${country}" class="removeButton">Remove Country</button></li></div>`;
@@ -278,7 +246,6 @@ function updateWatchLists(cardNum, selectValue) {
   }
   watchList[cardNum][`${selectValue}`] = 1;
   masterWatchList[selectValue] = 1;
-  console.log("selectValue: ", selectValue);
 }
 
 function handleRemoveCountry() {
@@ -293,14 +260,10 @@ function handleRemoveCountry() {
     drawWatchList(cardNum);
     const graphData = prepareGraphData(checkTimeFrame(), cardNum);
     if ($.isEmptyObject(watchList[cardNum])) {
-      // fillCanvas(color, `chart${cardNum}`);
       blankCanvas(cardNum, `chart${cardNum}`);
     } else {
-      console.log("here");
       drawGraph(cardNum, graphData[0], graphData[1]);
-      console.log(watchList[cardNum]);
     }
-    console.log("handleRemoveCountry cardNum: ", cardNum);
   });
 }
 
@@ -309,7 +272,6 @@ function handleAddCountry() {
   $("main").on("click", ".addCountryButton", async function (event) {
     event.preventDefault();
     const idOfThis = $(this).attr("id");
-    console.log("idOfThis", idOfThis);
     const cardNum = idOfThis[idOfThis.length - 1];
     const targetId = $(`#js-target${cardNum}`);
     const selectValue = targetId.val();
@@ -331,14 +293,8 @@ function handleAddCountry() {
   });
 }
 
-/* <input type="text" list="countriesList" class="countryList" id="countryList${chartCount}"/>
-<datalist id="countriesList">
-  ${countryList}
-</datalist> */
-
 function addGroup() {
   const color = cardColors[chartCount];
-  console.log("color: ", color);
   if (chartCount < 6) {
     $("#groupContainer").append(`
     <div class="group round-corners shadow" style="border-left: ${color} 10px solid;">
@@ -354,16 +310,11 @@ function addGroup() {
     </ul>
     </div>
     `);
-    // fillCanvas(color, `chart${chartCount}`);
     blankCanvas(chartCount, `chart${chartCount}`);
-    console.log("card appended");
-    console.log(`#js-target${chartCount}`);
     document.querySelector(`#js-target${chartCount}`).scrollIntoView({
       behavior: "smooth",
     });
     chartCount += 1;
-  } else {
-    console.log("card limit reached, no card appended");
   }
 }
 
@@ -381,7 +332,6 @@ async function handleEverything() {
   handleAddGroup();
   handleRemoveCountry();
   addGroup();
-  console.log("everything handled");
 }
 
 $(handleEverything());
