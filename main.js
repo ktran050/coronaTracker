@@ -99,8 +99,7 @@ function handleTimeFrame() {
 
 async function getCountryList() {
   // called at the start of the script
-  let resultHTML =
-    "<option value='-1' selected>Choose a country to add</option>";
+  let resultHTML = "<option value='-1' selected>Select country</option>";
   await fetch(baseURL + "countries")
     .then(function (result) {
       if (!result.ok) {
@@ -343,29 +342,33 @@ function addGroup() {
   if (chartCount < 6) {
     $("#groupContainer").append(`
     <div class="group round-corners shadow" style="border-left: ${color} 10px solid;">
-    <form id="countryOptions${chartCount}" class="groupChild countryOption">
-      <select id="js-target${chartCount}" class="countryList selectStyle shadow">${countryList}</select>
+    <form id="countryOptions${chartCount}" class="countryOption">
+      <select id="js-target${chartCount}" class="countryList shadow">${countryList}</select>
       <button id="addCountryButton${chartCount}" class="addCountryButton shadow">Add Country</button>
     </form>
     <div class="graph-wrapper">
-      <canvas id="chart${chartCount}" class="graph groupChild shadow"></canvas>
+      <canvas id="chart${chartCount}" class="graph shadow"></canvas>
     </div>
-    <ul id="watchList${chartCount}" class="watchList groupChild">
+    <ul id="watchList${chartCount}" class="watchList">
       <li>List of tracked countries for this graph</li>
     </ul>
     </div>
     `);
     // fillCanvas(color, `chart${chartCount}`);
     blankCanvas(chartCount, `chart${chartCount}`);
-    chartCount += 1;
     console.log("card appended");
+    console.log(`#js-target${chartCount}`);
+    document.querySelector(`#js-target${chartCount}`).scrollIntoView({
+      behavior: "smooth",
+    });
+    chartCount += 1;
   } else {
     console.log("card limit reached, no card appended");
   }
 }
 
 function handleAddGroup() {
-  $("main").on("click", "#addGroup", (event) => {
+  $("footer").on("click", "#addGroup", (event) => {
     event.preventDefault();
     addGroup();
   });

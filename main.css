@@ -7,10 +7,12 @@
 
 h1 {
   font-size: 2em;
+  margin-bottom: 15px;
 }
 
 html {
   background-color: rgb(32, 33, 36);
+  scroll-behavior: smooth;
 }
 
 .container {
@@ -22,71 +24,50 @@ html {
 header {
   position: relative;
   top: 0px;
-  height: 67px;
   text-align: center;
   color: white;
-  padding: 70px 20px 20px 20px;
+  padding: 35px 20px 10px;
 }
 
 main {
-  text-align: center;
-  /* padding: 20px; */
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-}
-
-main > div {
-  margin: 5px;
-  color: white;
+  align-items: center;
 }
 
 #groupContainer {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 15px;
+  flex-wrap: wrap;
+  margin: 5px;
+  color: white;
+  height: 100%;
 }
 
 .group {
   margin: 30px auto;
   background-color: #292a2d;
-  /* padding: 60px; */
+  flex: 1 1 300px;
   display: flex;
   flex-direction: column;
-  max-width: 95%;
+  max-width: 350px;
   box-sizing: border-box;
   padding: 10px;
   align-items: center;
+  text-align: center;
 }
 
 @media screen and (min-width: 800px) {
   #groupContainer {
     padding: 40px;
+    flex-direction: row;
   }
-  .group {
-    padding: 60px;
-    box-sizing: content-box;
-  }
-}
-
-.countryOption > select {
-  margin: 5px 0;
-}
-
-.countryOption > button {
-  margin: 5px 0;
 }
 
 .group:hover {
   box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
-}
-
-.groupChild {
-  margin: 45px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
 }
 
 .round-corners {
@@ -95,10 +76,12 @@ main > div {
 
 .watchList {
   list-style: none;
+  margin: 10px auto;
 }
 
 .graph-wrapper {
   min-height: 300px;
+  margin: 10px auto;
 }
 
 @media screen and (min-width: 800px) {
@@ -111,7 +94,7 @@ main > div {
 .graph {
   background: rgb(255, 255, 255);
   margin: 0 auto;
-  width: 200px;
+  width: 225px !important;
   min-height: 300px;
 }
 
@@ -129,20 +112,7 @@ footer {
 }
 
 #optionsDiv {
-  position: fixed;
-  right: 10px;
-  bottom: 80px;
-}
-
-#timeFrame {
-  text-align: center;
-  max-width: 150px;
-}
-
-@media screen and (min-width: 800px) {
-  #timeFrame {
-    width: 300px;
-  }
+  margin-top: 20px;
 }
 
 select {
@@ -164,12 +134,13 @@ button {
   z-index: 100;
 }
 
-.countryList {
-  min-width: 200px;
+.countryOption {
+  width: 250px;
 }
 
-.selectStyle {
-  max-width: 50%;
+.countryList {
+  width: 250px;
+  margin: 15px auto 10px;
 }
 
 .visible {
@@ -187,4 +158,4 @@ button {
 .noDataCountry {
   background-color: red;
   color: black;
-}
+} */
