@@ -32,14 +32,14 @@ header {
 main {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: space-around;
   align-items: center;
 }
 
 #groupContainer {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: space-around;
   flex-wrap: wrap;
   margin: 5px;
   color: white;
@@ -62,7 +62,7 @@ main {
   #groupContainer {
     padding: 40px;
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: space-around;
   }
   .group {
     margin: 15px;
