@@ -78,7 +78,7 @@ function findMissingKeys(objectA, objectB) {
 }
 
 function handleTimeFrame() {
-  $("main").on("click", "#timeFrame", function (event) {
+  $("header").on("click", "#timeFrame", function (event) {
     event.preventDefault();
     const selectValue = $(this).val();
     // since we only have <= 6 graphs the last char for each element in the card is the id of the overall card, all elements have ids ending with this number
@@ -209,9 +209,9 @@ function drawWatchList(cardNum) {
   let watchListHtml = "";
   for (const country in watchList[cardNum]) {
     if (cachedData[country] !== 0) {
-      watchListHtml += `<div><li">${country}<button id="${cardNum}${country}" class="removeButton">Remove Country</button></li></div>`;
+      watchListHtml += `<li>${country}<button id="${cardNum}${country}" class="removeButton">Remove</button></li>`;
     } else {
-      watchListHtml += `<div class="noDataCountry"><li">${country}<button id="${cardNum}${country}" class="removeButton">Remove Country</button></li></div>`;
+      watchListHtml += `<li class="noDataCountry">${country}<button id="${cardNum}${country}" class="removeButton">Remove</button></li>`;
     }
   }
   $(`#watchList${cardNum}`).html(watchListHtml);
