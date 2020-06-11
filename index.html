@@ -15,24 +15,21 @@
   <body>
     <div id="container" class="container">
       <header>
-        <div><h1>Covid-19 Case Tracker</h1></div>
+        <h1>Covid-19 Case Tracker</h1>
+        <form id="viewOptions">
+          <select id="timeFrame">
+            <option value="-1" selected>Choose a time frame</option>
+            <option value="0">All time</option>
+            <option value="7">Last 7 days</option>
+            <option value="30">Last 30 days</option>
+            <option value="365">Last 365 days</option>
+          </select>
+        </form>
       </header>
       <main class="round-corners">
-        <div id="optionsDiv" class="round-corners">
-          <form id="viewOptions">
-            <select id="timeFrame">
-              <option value="-1" selected>Choose a time frame</option>
-              <option value="0">All time</option>
-              <option value="7">Last 7 days</option>
-              <option value="30">Last 30 days</option>
-              <option value="365">Last 365 days</option>
-            </select>
-          </form>
-          <button id="addGroup">+</button>
-        </div>
         <div id="groupContainer" class="round-corners"></div>
       </main>
-      <footer>Links</footer>
+      <footer>Links <button id="addGroup">+</button></footer>
     </div>
     <script src="main.js"></script>
     <!-- <script src="chart.js"></script> -->
