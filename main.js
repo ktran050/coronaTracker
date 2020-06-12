@@ -211,7 +211,8 @@ function drawWatchList(cardNum) {
     if (cachedData[country] !== 0) {
       watchListHtml += `<li>${country}<button id="${cardNum}${country}" class="removeButton">Remove</button></li>`;
     } else {
-      watchListHtml += `<li class="noDataCountry">${country}<button id="${cardNum}${country}" class="removeButton">Remove</button></li>`;
+      watchListHtml += `<li><span title="No data was found for this country"><i class="alert material-icons" alt="Red exclamation mark within a red circle.">error_outline</i>${country}</span>
+      <button id="${cardNum}${country}" class="removeButton">Remove</button></li>`;
     }
   }
   $(`#watchList${cardNum}`).html(watchListHtml);
@@ -325,7 +326,12 @@ function handleAddGroup() {
   });
 }
 
+function handleTooltips() {
+  $(document).tooltip();
+}
+
 async function handleEverything() {
+  // handleTooltips();
   await getCountryList();
   handleTimeFrame();
   handleAddCountry();
