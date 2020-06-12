@@ -82,7 +82,9 @@ main {
   flex-direction: row;
   justify-content: space-between;
   width: 250px;
-  line-height: 46px;
+  line-height: 27px;
+  margin-top: 10px;
+  align-items: center;
 }
 
 .removeButton {
@@ -175,7 +177,7 @@ button:hover {
 
 .alert {
   vertical-align: middle;
-  color: rgba(255, 0, 0);
+  color: rgba(255, 255, 255);
 }
 
 @media screen and (min-width: 600px) and (max-width: 1200px) {

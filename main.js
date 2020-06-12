@@ -211,7 +211,7 @@ function drawWatchList(cardNum) {
     if (cachedData[country] !== 0) {
       watchListHtml += `<li>${country}<button id="${cardNum}${country}" class="removeButton">Remove</button></li>`;
     } else {
-      watchListHtml += `<li><span title="No data was found for this country"><i class="alert material-icons" alt="Red exclamation mark within a red circle.">error_outline</i>${country}</span>
+      watchListHtml += `<li><span title="No data was found for this country"><i class="alert material-icons" alt="Red exclamation mark within a red circle.">error_outline</i>  ${country}</span>
       <button id="${cardNum}${country}" class="removeButton">Remove</button></li>`;
     }
   }
