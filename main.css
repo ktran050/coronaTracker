@@ -126,6 +126,17 @@ select {
   padding: 10px;
 }
 
+button {
+  border: 1px rgba(95, 99, 104) solid;
+  color: rgb(138, 180, 215);
+  background-color: #292a2d;
+  border-radius: 5px;
+}
+
+button:hover {
+  background-color: #3a3b3f;
+}
+
 #addGroup {
   position: fixed;
   bottom: 20px;
