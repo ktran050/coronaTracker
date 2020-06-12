@@ -50,38 +50,15 @@ main {
   background-color: #292a2d;
   display: flex;
   flex-direction: column;
-  max-width: 350px;
   box-sizing: border-box;
   padding: 10px;
   align-items: center;
   text-align: center;
+  min-width: 300px;
 }
 
 .material-icon {
   vertical-align: middle;
-}
-
-@media screen and (min-width: 800px) {
-  #groupContainer {
-    padding: 40px;
-    flex-direction: row;
-    justify-content: space-around;
-    width: 90%;
-  }
-  .group {
-    margin: 15px;
-    padding: 30px;
-    min-width: 500px;
-  }
-  .graph-wrapper {
-    min-height: 400px;
-  }
-  .graph {
-    max-width: 350px !important;
-  }
-  * {
-    font-size: 24px;
-  }
 }
 
 .group:hover {
@@ -113,7 +90,7 @@ main {
 }
 
 .graph-wrapper {
-  min-height: 300px;
+  max-height: 300px;
   max-width: 250px !important;
   margin: 10px auto;
 }
@@ -121,7 +98,6 @@ main {
 .graph {
   background: rgb(255, 255, 255);
   margin: 0 auto;
-  max-width: 250px !important;
   min-height: 300px;
 }
 
@@ -189,4 +165,53 @@ select {
 
 #timeFrame {
   padding: 8px;
+}
+
+@media screen and (min-width: 600px) and (max-width: 1200px) {
+  #groupContainer {
+    padding: 40px;
+    flex-direction: row;
+    justify-content: space-around;
+    width: 90%;
+  }
+  .group {
+    margin: 15px;
+    padding: 30px;
+    min-width: 400px;
+  }
+  .graph-wrapper {
+    max-width: 350px !important;
+  }
+  .graph {
+    max-width: 350px !important;
+  }
+  #timeFrame {
+    max-width: 350px;
+  }
+  * {
+    font-size: 24px;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  #groupContainer {
+    padding: 40px;
+    flex-direction: row;
+    justify-content: space-around;
+    width: 90%;
+  }
+  .group {
+    margin: 15px;
+    padding: 30px;
+    min-width: 500px;
+  }
+  .graph-wrapper {
+    max-width: 350px !important;
+  }
+  .graph {
+    max-width: 450px !important;
+  }
+  #timeFrame {
+    max-width: 450px;
+  }
 }
