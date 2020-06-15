@@ -32,13 +32,6 @@ const chartOptions = {
   },
 };
 
-function fillCanvas(color, canvasId) {
-  const canvas = document.getElementById(`${canvasId}`);
-  const ctx = canvas.getContext("2d");
-  ctx.fillStyle = `${color}`;
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-}
-
 function blankCanvas(chartNum, canvasId) {
   const canvas = document.getElementById(`${canvasId}`);
   const ctx = canvas.getContext("2d");
@@ -77,13 +70,13 @@ function findMissingKeys(objectA, objectB) {
   return keyArray;
 }
 
+// reads the value of #timeFrame, calls drawGraph if the view is a valid option
+// called by handleEverything
 function handleTimeFrame() {
   $("header").on("click", "#timeFrame", function (event) {
     event.preventDefault();
     const selectValue = $(this).val();
-    // since we only have <= 6 graphs the last char for each element in the card is the id of the overall card, all elements have ids ending with this number
     if (selectValue === "-1") {
-      // the first option in the select has value "-1" and is a non-option
       return;
     }
     timeFrame = selectValue;
@@ -96,8 +89,9 @@ function handleTimeFrame() {
   });
 }
 
+// populates a list of all countries tracked by the source through a fetch call
+// called by handleEverything
 async function getCountryList() {
-  // called at the start of the script
   let resultHTML = "<option value='-1' selected>Select country</option>";
   await fetch(baseURL + "countries")
     .then(function (result) {
@@ -118,6 +112,10 @@ async function getCountryList() {
     });
 }
 
+// Makes a fetch call for the passed country. If the fetch fails it calls functions to update our watchList and cachedData
+// Accepts string countryName
+// Returns a JSON promise
+// Called by getAllData
 function getData(countryName) {
   return fetch(decodeURI(baseURL + `historical/${countryName}?lastdays=1000`))
     .then(function (result) {
@@ -134,6 +132,9 @@ function getData(countryName) {
     });
 }
 
+// Calls getData for any countries we don't have cached data for
+// Returns an array of getData calls that are successful
+// Called by handleAddCountry
 async function getAllData() {
   const countriesNotCached = findMissingKeys(masterWatchList, cachedData);
   let results = await Promise.all(
@@ -146,6 +147,9 @@ async function getAllData() {
   return results.filter((result) => !(result instanceof Error));
 }
 
+// Updates cachedData
+// Accepts data to be cached
+// Called by handleAddCountry
 function updateCache(data) {
   for (const element of data) {
     if (element) {
@@ -154,14 +158,21 @@ function updateCache(data) {
   }
 }
 
+// Updates cachedData for a country with no associated data
+// Accepts string for the name of the country
 function updateInvalidCache(countryName) {
   cachedData[countryName] = 0;
 }
 
+// Accessor for our global timeFrame
 function checkTimeFrame() {
   return timeFrame;
 }
 
+// Loads labelsArray and datasetArray for a graph
+// Accepts int timeFrame (in days), chartNum (to target chart id)
+// Returns labelsArray and datasetArray
+// Called by handleAddCountry
 function prepareGraphData(timeFrame, chartNum) {
   let labelsArray = [];
   let dataArray = [];
@@ -205,6 +216,9 @@ function prepareGraphData(timeFrame, chartNum) {
   return [labelsArray, datasetArray];
 }
 
+// Draws our watchlist for this specific card
+// Accepts a cardNum (acts as an id for the card)
+// Called by handleAddCountry
 function drawWatchList(cardNum) {
   let watchListHtml = "";
   for (const country in watchList[cardNum]) {
@@ -218,6 +232,9 @@ function drawWatchList(cardNum) {
   $(`#watchList${cardNum}`).html(watchListHtml);
 }
 
+// Draws a graph
+// Accepts chartNum (acts as an id for the graph), labelsArray (every point on our line graph), datasetArray (value for each point)
+// Called by handleAddCountry
 function drawGraph(chartNum, labelsArray, datasetArray) {
   const ctx = document.getElementById(`chart${chartNum}`).getContext("2d");
 
@@ -237,6 +254,8 @@ function drawGraph(chartNum, labelsArray, datasetArray) {
   });
 }
 
+// Updates our watchList for a country with no associated data
+// called by getData
 function updateInvalidWatchList(country) {
   masterWatchList[country] = 1;
 }
@@ -249,6 +268,8 @@ function updateWatchLists(cardNum, selectValue) {
   masterWatchList[selectValue] = 1;
 }
 
+// Removes a country from a card
+// Called by handleEverything
 function handleRemoveCountry() {
   $("main").on("click", ".removeButton", function (event) {
     event.preventDefault();
@@ -268,17 +289,16 @@ function handleRemoveCountry() {
   });
 }
 
+// Listens for the user clicking a .addCountryButton, reads the country chosen in the select, and calls helpers to add the country to our system
+// Called by handleEverything
 function handleAddCountry() {
-  // called by handleEverything
   $("main").on("click", ".addCountryButton", async function (event) {
     event.preventDefault();
     const idOfThis = $(this).attr("id");
     const cardNum = idOfThis[idOfThis.length - 1];
     const targetId = $(`#js-target${cardNum}`);
     const selectValue = targetId.val();
-    // since we only have <= 6 graphs the last char for each element in the card is the id of the overall card, all elements have ids ending with this number
     if (selectValue === "-1") {
-      // the first option in the select has value "-1" and is a non-option
       return;
     } else {
       updateWatchLists(cardNum, selectValue);
@@ -294,6 +314,8 @@ function handleAddCountry() {
   });
 }
 
+// Adds a card to the DOM
+// Called by handleAddGroup
 function addGroup() {
   const color = cardColors[chartCount];
   if (chartCount < 6) {
@@ -319,6 +341,8 @@ function addGroup() {
   }
 }
 
+// Listens for users to add a group
+// Called by handleAddGroup
 function handleAddGroup() {
   $("footer").on("click", "#addGroup", (event) => {
     event.preventDefault();
@@ -326,12 +350,7 @@ function handleAddGroup() {
   });
 }
 
-function handleTooltips() {
-  $(document).tooltip();
-}
-
 async function handleEverything() {
-  // handleTooltips();
   await getCountryList();
   handleTimeFrame();
   handleAddCountry();
